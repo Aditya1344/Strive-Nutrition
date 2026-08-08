@@ -1,0 +1,76 @@
+{%- comment -%}
+  Strive product card. Reused by the shop grid and anywhere else a product
+  tile is needed (kept as its own snippet per the "reusable" requirement
+  rather than duplicated markup per section).
+
+  Params:
+    product   — required, a Shopify product object
+    pill      — optional string override ("Best seller", "New"...). If
+                omitted, falls back to the product's first `pill:` tag,
+                then to nothing. "Sold out" always wins regardless.
+    lazy      — optional bool, default true. Pass false for above-the-fold
+                cards (first row) to avoid an LCP penalty.
+{%- endcomment -%}
+{%- liquid
+  assign loading_attr = 'lazy'
+  if lazy == false
+    assign loading_attr = 'eager'
+  endif
+
+  assign pill_text = pill
+  if pill_text == blank
+    for tag in product.tags
+      if tag contains 'pill:'
+        assign pill_text = tag | remove: 'pill:'
+        break
+      endif
+    endfor
+  endif
+
+  assign rating = product.metafields.reviews.rating.value
+  assign rating_count = product.metafields.reviews.count.value
+-%}
+<article class="sv-glass sv-card sv-rv">
+  <div class="sv-shot">
+    {%- if pill_text != blank and product.available -%}
+      <span class="sv-pill">{{ pill_text }}</span>
+    {%- elsif product.available == false -%}
+      <span class="sv-pill sv-soldout">Sold out</span>
+    {%- endif -%}
+    {%- if product.featured_image -%}
+      {{ product.featured_image | image_url: width: 400 | image_tag:
+        widths: '200,300,400',
+        sizes: '(min-width: 860px) 220px, 45vw',
+        alt: product.featured_image.alt | default: product.title,
+        loading: loading_attr
+      -}}
+    {%- else -%}
+      <span class="sv-noimg">Photo coming soon</span>
+    {%- endif -%}
+  </div>
+  <h4>{{ product.title }}</h4>
+  <div class="sv-rate">
+    {%- if rating -%}
+      <b>&#9733; {{ rating }}</b> &middot; {{ rating_count | default: 0 }} reviews
+    {%- endif -%}
+  </div>
+  <div class="sv-pr">
+    <strong>{{ product.price | money_without_trailing_zeros }}</strong>
+    {%- if product.compare_at_price > product.price -%}
+      <s>{{ product.compare_at_price | money_without_trailing_zeros }}</s>
+      <em>{{ product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round }}% off</em>
+    {%- endif -%}
+  </div>
+  {%- if product.available -%}
+    <product-form data-sv-quick-add>
+      {%- form 'product', product -%}
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+        <button type="submit" class="sv-btn sv-btn-ghost sv-btn-sm" {% if product.selected_or_first_available_variant.available == false %}disabled{% endif %}>
+          Add to cart
+        </button>
+      {%- endform -%}
+    </product-form>
+  {%- else -%}
+    <button class="sv-btn sv-btn-ghost sv-btn-sm" disabled>Sold out</button>
+  {%- endif -%}
+</article>

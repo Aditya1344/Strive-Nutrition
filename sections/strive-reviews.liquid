@@ -1,0 +1,78 @@
+{{ 'strive-base.css' | asset_url | stylesheet_tag }}
+{{ 'strive-sections.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign reviews = section.settings.reviews
+  assign has_reviews = false
+  if reviews.size > 0
+    assign has_reviews = true
+  endif
+-%}
+
+<div class="sv-scope">
+<section class="sv-sec sv-revband" id="{{ section.id }}">
+  <div class="sv-wrap">
+    <div class="sv-revhead sv-rv">
+      <span class="sv-kicker">{{ section.settings.kicker }}</span>
+      {%- if section.settings.rating_value != blank -%}
+        <span class="sv-agg"><span class="sv-st">{% render 'strive-icon', name: 'star' %}{% render 'strive-icon', name: 'star' %}{% render 'strive-icon', name: 'star' %}{% render 'strive-icon', name: 'star' %}{% render 'strive-icon', name: 'star' %}</span>
+          <b>{{ section.settings.rating_value }}</b> from {{ section.settings.rating_count }}</span>
+      {%- endif -%}
+      {%- if section.settings.homes_stat != blank -%}
+        <span class="sv-agg">Loved by <b>{{ section.settings.homes_stat }}</b></span>
+      {%- endif -%}
+    </div>
+  </div>
+
+  {%- if has_reviews -%}
+    <div class="sv-revrail sv-rv" aria-label="Customer reviews" tabindex="0">
+      {%- comment -%} Track is duplicated once so the CSS marquee can loop seamlessly at -50%. Skipped entirely (no duplication) under reduced motion via CSS, so screen reader / keyboard users never hit repeated content twice in a meaningful way. {%- endcomment -%}
+      <div class="sv-revtrack">
+        {%- for i in (1..2) -%}
+          {%- for review in reviews -%}
+            <article class="sv-glass-2 sv-rcard" {% if i == 2 %}aria-hidden="true"{% endif %}>
+              <div class="sv-st">
+                {%- assign stars = review.rating.value | default: 5 -%}
+                {%- for s in (1..stars) -%}{% render 'strive-icon', name: 'star' %}{%- endfor -%}
+              </div>
+              <h5>{{ review.title.value }}</h5>
+              <p>{{ review.body.value }}</p>
+              <div class="sv-who">
+                {% render 'strive-icon', name: 'check' %}
+                <b>{{ review.author_name.value }}</b>
+                {%- if review.product_context.value != blank -%}<span>&middot; {{ review.product_context.value }}</span>{%- endif -%}
+              </div>
+            </article>
+          {%- endfor -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- else -%}
+    <div class="sv-wrap">
+      <p class="sv-body-s" style="text-align:center">Add reviews from the theme editor — Content &rsaquo; Metaobjects &rsaquo; Review, then pick them in this section's settings.</p>
+    </div>
+  {%- endif -%}
+</section>
+</div>
+
+{{ 'strive-sections.js' | asset_url | script_tag }}
+
+{% schema %}
+{
+  "name": "Strive Reviews",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "kicker", "label": "Kicker", "default": "That's what they said" },
+    { "type": "text", "id": "rating_value", "label": "Aggregate rating (e.g. 4.8)", "default": "4.8" },
+    { "type": "text", "id": "rating_count", "label": "Rating count label", "default": "8,000+ reviews" },
+    { "type": "text", "id": "homes_stat", "label": "Customer count stat", "default": "40,000+ athletes" },
+    {
+      "type": "metaobject_list",
+      "id": "reviews",
+      "label": "Reviews",
+      "metaobject_type": "review"
+    }
+  ],
+  "presets": [ { "name": "Strive Reviews" } ]
+}
+{% endschema %}

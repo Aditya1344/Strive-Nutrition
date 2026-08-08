@@ -1,0 +1,175 @@
+{{ 'strive-base.css' | asset_url | stylesheet_tag }}
+{{ 'strive-sections.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign stage_blocks = section.blocks | where: 'type', 'stage'
+  assign badge_blocks = section.blocks | where: 'type', 'badge'
+-%}
+
+<div class="sv-scope">
+<header data-sv-header class="sv-header-slot">
+  {%- comment -%} Nav pill intentionally left to the theme's existing header section — this block only ships the hero. {%- endcomment -%}
+</header>
+
+<section class="sv-hero" data-sv-hero id="{{ section.id }}">
+  <div class="sv-hero-grid">
+
+    {%- if badge_blocks.size > 0 -%}
+      <div class="sv-badges sv-glass-2" aria-label="Product promises">
+        {%- for block in badge_blocks limit: 3 -%}
+          <div class="sv-badge" {{ block.shopify_attributes }}>
+            <span class="sv-bi">{% render 'strive-icon', name: block.settings.icon %}</span>
+            <span>{{ block.settings.label }}</span>
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    <div class="sv-hero-copy">
+      <h1 class="sv-d1 sv-rv sv-in">
+        {{ section.settings.heading_line_1 }}<br>
+        {{ section.settings.heading_line_2 }}<br>
+        <span class="sv-accent-txt">{{ section.settings.heading_line_3 }}</span>
+      </h1>
+      <div class="sv-rule sv-rv sv-rv-d1">
+        <i></i>{% render 'strive-icon', name: 'leaf' %}<i></i>
+      </div>
+      <p class="sv-lede sv-rv sv-rv-d2">{{ section.settings.subtext }}</p>
+      <div class="sv-hero-cta sv-rv sv-rv-d3">
+        {%- if section.settings.primary_cta_text != blank -%}
+          <a class="sv-btn sv-btn-primary" href="{{ section.settings.primary_cta_link | default: '#' }}">
+            {{ section.settings.primary_cta_text }}
+            {% render 'strive-icon', name: 'arrow' %}
+          </a>
+        {%- endif -%}
+        {%- if section.settings.secondary_cta_text != blank -%}
+          <a class="sv-btn sv-btn-ghost" href="{{ section.settings.secondary_cta_link | default: '#' }}">{{ section.settings.secondary_cta_text }}</a>
+        {%- endif -%}
+      </div>
+
+      {%- if badge_blocks.size > 0 -%}
+        <div class="sv-badgestrip sv-rv sv-rv-d4">
+          {%- for block in badge_blocks limit: 3 -%}
+            <div class="sv-glass-2">
+              {% render 'strive-icon', name: block.settings.icon %}
+              {{ block.settings.label }}
+            </div>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- if stage_blocks.size > 0 -%}
+      <div class="sv-hero-prod" id="heroProd-{{ section.id }}">
+        <div class="sv-hstage" data-sv-hstage>
+          {%- for block in stage_blocks limit: 3 -%}
+            {%- liquid
+              assign stage_products = block.settings.products
+              assign sum_compare = 0
+              assign sum_price = 0
+              for p in stage_products
+                assign p_compare = p.compare_at_price
+                if p_compare == blank or p_compare <= 0
+                  assign p_compare = p.price
+                endif
+                assign sum_compare = sum_compare | plus: p_compare
+                assign sum_price = sum_price | plus: p.price
+              endfor
+              assign display_compare = sum_compare
+              if block.settings.compare_at_override > 0
+                assign display_compare = block.settings.compare_at_override | times: 100
+              endif
+              assign display_price = sum_price
+              if block.settings.flat_price > 0
+                assign display_price = block.settings.flat_price | times: 100
+              endif
+            -%}
+            <div class="sv-hslide{% if forloop.first %} sv-on{% endif %}" data-n="{{ forloop.index }}" {{ block.shopify_attributes }}>
+              {%- for p in stage_products limit: 3 -%}
+                {%- if p.featured_image -%}
+                  <span class="sv-hp" style="background-image:url('{{ p.featured_image | image_url: width: 500 }}')" role="img" aria-label="{{ p.featured_image.alt | default: p.title }}"></span>
+                {%- endif -%}
+              {%- endfor -%}
+              <div class="sv-glass-2 sv-ptag">
+                <span class="sv-lbl">{{ block.settings.label }}</span>
+                <span class="sv-val">
+                  <strong>{{ display_price | money_without_trailing_zeros }}</strong>
+                  {%- if display_compare > display_price -%}<s>{{ display_compare | money_without_trailing_zeros }}</s>{%- endif -%}
+                </span>
+                {%- if display_compare > display_price -%}
+                  <span class="sv-cut">Save {{ display_compare | minus: display_price | money_without_trailing_zeros }}</span>
+                {%- endif -%}
+              </div>
+            </div>
+          {%- endfor -%}
+        </div>
+        {%- if stage_blocks.size > 1 -%}
+          <div class="sv-hdots" data-sv-hdots>
+            {%- for block in stage_blocks limit: 3 -%}
+              <button type="button" class="{% if forloop.first %}sv-on{% endif %}" aria-label="Show {{ block.settings.label }}"></button>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+  </div>
+</section>
+</div>
+
+{{ 'strive-sections.js' | asset_url | script_tag }}
+
+{% schema %}
+{
+  "name": "Strive Hero",
+  "tag": "section",
+  "class": "strive-hero-section",
+  "settings": [
+    { "type": "text", "id": "heading_line_1", "label": "Heading line 1", "default": "Fuel" },
+    { "type": "text", "id": "heading_line_2", "label": "Heading line 2", "default": "That" },
+    { "type": "text", "id": "heading_line_3", "label": "Heading line 3 (accent color)", "default": "Performs" },
+    { "type": "textarea", "id": "subtext", "label": "Subtext", "default": "Clean-label protein, creatine and fuel for people who train hard and read labels harder." },
+    { "type": "text", "id": "primary_cta_text", "label": "Primary button text", "default": "Shop now" },
+    { "type": "url", "id": "primary_cta_link", "label": "Primary button link" },
+    { "type": "text", "id": "secondary_cta_text", "label": "Secondary button text", "default": "How it works" },
+    { "type": "url", "id": "secondary_cta_link", "label": "Secondary button link" }
+  ],
+  "blocks": [
+    {
+      "type": "badge",
+      "name": "Trust badge",
+      "settings": [
+        { "type": "select", "id": "icon", "label": "Icon", "default": "leaf",
+          "options": [
+            { "value": "leaf", "label": "Leaf" },
+            { "value": "shield", "label": "Shield" },
+            { "value": "target", "label": "Target" }
+          ] },
+        { "type": "text", "id": "label", "label": "Label (use <br> for line break)", "default": "Plant<br>powered" }
+      ]
+    },
+    {
+      "type": "stage",
+      "name": "Price stage",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Stage label", "default": "Single tub" },
+        { "type": "product_list", "id": "products", "label": "Products shown in this stage", "limit": 3 },
+        { "type": "number", "id": "flat_price", "label": "Flat price override, in rupees (blank/0 = sum of products)" },
+        { "type": "number", "id": "compare_at_override", "label": "Compare-at override, in rupees (blank/0 = sum of products' compare-at)" }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "Strive Hero",
+      "blocks": [
+        { "type": "badge", "settings": { "icon": "leaf", "label": "Plant<br>powered" } },
+        { "type": "badge", "settings": { "icon": "shield", "label": "3rd-party<br>tested" } },
+        { "type": "badge", "settings": { "icon": "target", "label": "Zero<br>fillers" } },
+        { "type": "stage", "settings": { "label": "Single tub" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,123 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "strive_hero_WE4TG3": {
+      "type": "strive-hero",
+      "blocks": {
+        "badge_jhFRW6": {
+          "type": "badge",
+          "settings": {
+            "icon": "leaf",
+            "label": "Plantpowered"
+          }
+        },
+        "badge_tipg8C": {
+          "type": "badge",
+          "settings": {
+            "icon": "shield",
+            "label": "3rd-party<br>tested"
+          }
+        },
+        "badge_VfEPE3": {
+          "type": "badge",
+          "settings": {
+            "icon": "target",
+            "label": "Zero<br>fillers"
+          }
+        },
+        "stage_RXTN7p": {
+          "type": "stage",
+          "settings": {
+            "label": "Single tub",
+            "products": [
+              "plant-protein-vanilla"
+            ]
+          }
+        }
+      },
+      "block_order": [
+        "badge_jhFRW6",
+        "badge_tipg8C",
+        "badge_VfEPE3",
+        "stage_RXTN7p"
+      ],
+      "name": "Strive Hero",
+      "settings": {
+        "heading_line_1": "Fuel",
+        "heading_line_2": "That",
+        "heading_line_3": "Performance",
+        "subtext": "Clean-label protein, creatine and fuel for people who train hard and read labels harder.",
+        "primary_cta_text": "Shop now",
+        "primary_cta_link": "",
+        "secondary_cta_text": "How it works",
+        "secondary_cta_link": ""
+      }
+    },
+    "strive_shop_grid_QMUXyL": {
+      "type": "strive-shop-grid",
+      "name": "Strive Shop grid",
+      "settings": {
+        "kicker": "Bestsellers",
+        "heading": "Loved by 30,000 athletes",
+        "collection": "bestsellers",
+        "products_per_page": 8
+      }
+    },
+    "strive_combos_e3i3pc": {
+      "type": "strive-combos",
+      "name": "Strive Combos",
+      "settings": {
+        "kicker": "Pre-built to save you money",
+        "heading": "Best selling stacks",
+        "subtext": "Swipe through the stacks people order most. Each one is already priced below buying the same products on their own.",
+        "footnote": "Tapping \"Shop bundle\" opens the bundle picker with these products already added. You can still swap anything before you pay.",
+        "combos": [
+          "great-combo",
+          "super-combo"
+        ]
+      }
+    },
+    "strive_bundles_9AERb7": {
+      "type": "strive-bundles",
+      "name": "Strive Bundles",
+      "settings": {
+        "kicker": "Build your stack",
+        "heading": "One box. Every goal.",
+        "subtext": "Mix and match across protein, creatine and snacking. One flat price, no code needed, free shipping either way.",
+        "disclaimer": "Flat pricing is applied at checkout once your box is built on the Shop page.",
+        "tiers": [
+          "starter"
+        ]
+      }
+    },
+    "strive_reviews_9L7xN4": {
+      "type": "strive-reviews",
+      "name": "Strive Reviews",
+      "settings": {
+        "kicker": "That's what they said",
+        "rating_value": "4.8",
+        "rating_count": "8,000+ reviews",
+        "homes_stat": "40,000+ athletes",
+        "reviews": [
+          "review-vdrsbgpg",
+          "review-u69ra5x7"
+        ]
+      }
+    }
+  },
+  "order": [
+    "strive_hero_WE4TG3",
+    "strive_shop_grid_QMUXyL",
+    "strive_combos_e3i3pc",
+    "strive_bundles_9AERb7",
+    "strive_reviews_9L7xN4"
+  ]
+}

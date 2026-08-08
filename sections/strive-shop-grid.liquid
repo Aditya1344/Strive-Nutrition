@@ -1,0 +1,60 @@
+{{ 'strive-base.css' | asset_url | stylesheet_tag }}
+{{ 'strive-sections.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign collection = collections[section.settings.collection]
+  assign per_page = section.settings.products_per_page
+-%}
+
+<div class="sv-scope">
+<section class="sv-sec" id="{{ section.id }}">
+  <div class="sv-wrap">
+    <div class="sv-panel-head sv-rv">
+      <span class="sv-kicker">{{ section.settings.kicker }}</span>
+      <h2 class="sv-d2" style="margin-top:12px">{{ section.settings.heading }}</h2>
+      <div class="sv-rule" style="margin-left:auto;margin-right:auto"><i></i>{% render 'strive-icon', name: 'leaf' %}<i></i></div>
+    </div>
+
+    {%- paginate collection.products by per_page -%}
+      {%- if collection.products.size > 0 -%}
+        <div class="sv-shelf">
+          {%- for product in collection.products -%}
+            {%- render 'strive-product-card', product: product, lazy: forloop.index0 >= 4 -%}
+          {%- endfor -%}
+        </div>
+
+        {%- if paginate.pages > 1 -%}
+          <nav class="sv-pagination" role="navigation" aria-label="Pagination" style="display:flex;justify-content:center;gap:10px;margin-top:24px">
+            {%- if paginate.previous -%}<a class="sv-btn sv-btn-ghost sv-btn-sm" href="{{ paginate.previous.url }}">Previous</a>{%- endif -%}
+            {%- if paginate.next -%}<a class="sv-btn sv-btn-ghost sv-btn-sm" href="{{ paginate.next.url }}">Next</a>{%- endif -%}
+          </nav>
+        {%- endif -%}
+      {%- else -%}
+        <p class="sv-body-s" style="text-align:center">
+          {%- if collection == blank -%}
+            Pick a collection in this section's settings to populate the shop grid.
+          {%- else -%}
+            No products in this collection yet.
+          {%- endif -%}
+        </p>
+      {%- endif -%}
+    {%- endpaginate -%}
+  </div>
+</section>
+</div>
+
+{{ 'strive-sections.js' | asset_url | script_tag }}
+
+{% schema %}
+{
+  "name": "Strive Shop grid",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "kicker", "label": "Kicker", "default": "Bestsellers" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Loved by 30,000 athletes" },
+    { "type": "collection", "id": "collection", "label": "Collection" },
+    { "type": "range", "id": "products_per_page", "label": "Products per page", "min": 4, "max": 24, "step": 4, "default": 8 }
+  ],
+  "presets": [ { "name": "Strive Shop grid" } ]
+}
+{% endschema %}
